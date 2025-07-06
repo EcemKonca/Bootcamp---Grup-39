@@ -28,7 +28,9 @@ ________________________________________
 •	Ekip içi görev dağılımı ve roadmap planlaması tamamlandı
 ________________________________________
 🗣️ Sprint Review:
-Ekip üyeleri, proje fikri ve görev dağılımları hakkında fikirlerini sundu. Proje yönünün hem teknik olarak uygulanabilir hem de faydalı bulunduğu konusunda uzlaşıldı. Kullanıcı senaryoları ve temel işlevlerin net oluşu, sonraki sprintlere sağlam bir temel oluşturdu.
+Ekip üyeleri, proje fikri ve görev dağılımları hakkında fikirlerini sundu. 
+Proje yönünün hem teknik olarak uygulanabilir hem de faydalı bulunduğu konusunda uzlaşıldı.
+Kullanıcı senaryoları ve temel işlevlerin net oluşu, sonraki sprintlere sağlam bir temel oluşturdu.
 Sprint Review Katılımcıları:
 Ecem, İsra
 ________________________________________
