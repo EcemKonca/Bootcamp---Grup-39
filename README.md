@@ -26,125 +26,151 @@ EduMind, yapay zeka teknolojilerini kullanarak kişiselleştirilmiş öğrenme d
 - **React Router**: Client-side routing
 - **Context API**: State management
 
-## 📦 Kurulum
-
-### Gereksinimler
-- Python 3.8+
-- Node.js 14+
-- npm veya yarn
-
-### Backend Kurulumu
-
-```bash
-# Backend dizinine geç
-cd backend
-
-# Sanal ortam oluştur
-python -m venv venv
-
-# Sanal ortamı aktifleştir
-# Windows:
-venv\Scripts\activate
-# macOS/Linux:
-source venv/bin/activate
-
-# Bağımlılıkları yükle
-pip install -r requirements.txt
-
-# Uygulamayı başlat
-uvicorn app.main:app --reload
-```
-
-### Frontend Kurulumu
-
-```bash
-# Frontend dizinine geç
-cd frontend
-
-# Bağımlılıkları yükle
-npm install
-
-# Uygulamayı başlat
-npm start
-```
-
-## 🎯 Kullanım
-
-1. **Backend**: http://localhost:8000 adresinde çalışır
-2. **Frontend**: http://localhost:3000 adresinde çalışır
-3. **API Dokümantasyonu**: http://localhost:8000/docs
-
-## 📁 Proje Yapısı
-
-```
-EduMind/
-├── backend/
-│   ├── app/
-│   │   ├── models/         # Veritabanı modelleri
-│   │   ├── routers/        # API endpoint'leri
-│   │   ├── services/       # İş mantığı
-│   │   └── database.py     # Veritabanı konfigürasyonu
-│   └── requirements.txt    # Python bağımlılıkları
-├── frontend/
-│   ├── src/
-│   │   ├── components/     # React bileşenleri
-│   │   ├── pages/         # Sayfa bileşenleri
-│   │   ├── context/       # Context API
-│   │   └── App.tsx        # Ana uygulama
-│   └── package.json       # Node.js bağımlılıkları
-└── README.md
-```
-
-## 🔧 Geliştirme
-
-### Backend Geliştirme
-- FastAPI otomatik reload ile çalışır
-- API dokümantasyonu `/docs` endpoint'inde mevcuttur
-- Veritabanı değişiklikleri için migration kullanın
-
-### Frontend Geliştirme
-- React hot reload aktiftir
-- TypeScript strict mode kullanılır
-- Tailwind CSS utility classes kullanın
-
-## 🚀 Deployment
-
-### Backend Deployment
-```bash
-# Production için
-pip install gunicorn
-gunicorn app.main:app -k uvicorn.workers.UvicornWorker
-```
-
-### Frontend Deployment
-```bash
-# Build oluştur
-npm run build
-
-# Build klasörünü static hosting'e yükle
-```
-
-## 🤝 Katkıda Bulunma
-
-1. Projeyi fork edin
-2. Feature branch oluşturun (`git checkout -b feature/amazing-feature`)
-3. Değişikliklerinizi commit edin (`git commit -m 'Add amazing feature'`)
-4. Branch'inizi push edin (`git push origin feature/amazing-feature`)
-5. Pull Request oluşturun
-
-## 📄 Lisans
-
-Bu proje MIT lisansı altında lisanslanmıştır.
-
-## 👥 Geliştirici Ekibi
-
-- **Bootcamp Grup 39** - Tam Stack Geliştirme
-
-## 📞 İletişim
-
-Proje hakkında sorularınız için GitHub Issues kullanabilirsiniz.
+# 🌀 Sprint 1
 
 ---
 
-⭐ Bu projeyi beğendiyseniz yıldız vermeyi unutmayın!
+## 📝 Sprint Notları  
+User Story’ler, product backlog içerisine yazılmıştır.  
+Her bir backlog item’ına tıklandığında ilgili kullanıcı hikayesinin detayı okunabilir durumdadır.  
+Projenin temel işlevleri belirlendi ve görevler kategorilere ayrılarak planlandı.
+
+---
+
+## 🎯 Sprint İçinde Tamamlanması Tahmin Edilen Puan  
+**100 Puan**
+
+---
+
+## 📐 Puan Tamamlama Mantığı  
+Proje genelinde 300 puanlık bir backlog belirlenmiştir.Bu görevler 3 sprint’e bölünmüş ve ilk sprintte 100 puanlık iş yapılması hedeflenmiştir. İlk sprint, proje fikrinin netleştirilmesi ve temel planlama aşamalarını kapsayacak şekilde düzenlenmiştir.
+
+---
+
+## ☕ Daily Scrum  
+Daily Scrum toplantılarının **WhatsApp grubu** üzerinden yapılmasına karar verilmiştir.
+
+---
+
+## 📌 Sprint Board Güncellemesi  
+Sprint süresince görev takibi **Trello** üzerinden yapılmıştır.  
+🖼️ ![image](https://github.com/user-attachments/assets/39bb0f45-76d6-4c7a-9f02-66b3a9850bac)
+
+
+---
+
+## 🖥️ Ürün Durumu (Sprint 1)
+
+- Proje fikri belirlendi: **EduMind – AI Destekli Kişiselleştirilmiş Öğrenme Koçu**
+- Hedef kullanıcı kitlesi ve çözülmek istenen problem netleştirildi  
+- Kullanıcı senaryoları ve temel fonksiyon listesi hazırlandı  
+- Kullanılacak teknolojiler belirlendi: **Python, FastAPI, Gemini API**  
+- Product backlog oluşturularak story point’ler atandı  
+- Ekip içi görev dağılımı ve roadmap planlaması tamamlandı  
+
+---
+
+## 🗣️ Sprint Review  
+
+Ekip üyeleri, proje fikri ve görev dağılımları hakkında fikirlerini sundu.  
+Proje yönünün hem teknik olarak uygulanabilir hem de faydalı bulunduğu konusunda uzlaşıldı.  
+Kullanıcı senaryoları ve temel işlevlerin net oluşu, sonraki sprintlere sağlam bir temel oluşturdu.
+
+**Sprint Review Katılımcıları:**  
+- Ecem  
+- İsra  
+
+---
+
+## 🔍 Sprint Retrospective  
+
+### ✅ Güçlü Yönler:
+- Ekip içinde fikir alışverişi güçlüydü, kararlar oy birliğiyle alındı  
+- Görevler kişilere net şekilde dağıtıldı  
+- Kullanıcı senaryoları detaylıca düşünüldü  
+
+### ⚠️ İyileştirilmesi Gereken Noktalar:
+- İletişimin daha da hızlanması için Daily Scrum zamanlarının sabitlenmesine karar verildi  
+- Teknik araştırmalara daha erken başlanması gerektiği fark edildi  
+
+
+## 🌀 Sprint 2
+
+---
+
+### 📝 Sprint Notları  
+Bu sprintte projenin temel yazılım altyapısı oluşturuldu.  
+Backend tarafında FastAPI ile API yapısı kuruldu, kullanıcı kimlik doğrulama ve not yönetimi sistemleri geliştirildi.  
+Frontend tarafında ise React ile kullanıcı arayüzü iskeleti kuruldu.  
+Tasarım, veri akışı ve kullanıcı etkileşimi temel alınarak component yapısı oturtuldu.  
+
+---
+
+### 🎯 Sprint İçinde Tamamlanması Tahmin Edilen Puan  
+**100 Puan**
+
+---
+
+### 📐 Puan Tamamlama Mantığı  
+Toplam 300 puanlık backlog’un ikinci sprintinde, ürünün teknik altyapısının kodlandığı 100 puanlık işler yapılmıştır.
+
+---
+
+### ☕ Daily Scrum  
+- Daily Scrum toplantıları Discord üzerinden yapılmaya devam etti.  
+- Ayrıca günlük ilerleme durumu WhatsApp grubundan paylaşıldı.
+
+---
+
+### 📌 Sprint Board Güncellemesi  
+- Görev takibi Trello üzerinden sürdürüldü.  
+🖼️ <img width="1425" height="747" alt="image" src="https://github.com/user-attachments/assets/52b1f84f-a065-4786-94c8-324cea4e30f4" />
+
+
+---
+
+### 🖥️ Ürün Durumu (Sprint 2)
+
+#### ✅ Backend Geliştirmeleri
+- FastAPI ile temel proje yapısı kuruldu  
+- Kullanıcı kayıt ve giriş sistemi geliştirildi (JWT Authentication)  
+- Not ve quiz işlemleri için CRUD endpoint’leri yazıldı  
+- Veritabanı bağlantısı kuruldu ve modeller oluşturuldu  
+- `requirements.txt` ile bağımlılıklar listelendi  
+
+#### ✅ Frontend Geliştirmeleri
+- Giriş/kayıt sayfaları tasarlandı  
+- Form bileşenleri geliştirildi  
+- Auth context ile oturum yönetimi kuruldu  
+- Backend ile ilk API entegrasyonu başarıyla yapıldı  
+
+---
+
+### 🗣️ Sprint Review  
+
+- Projenin teknik altyapısı tamamlandı ve fonksiyonel hale getirildi  
+- Frontend ve backend taraflarının entegre çalışması sağlandı  
+- Kod yapısı modüler, anlaşılır ve sürdürülebilir olarak inşa edildi  
+
+**Katılımcılar:**  
+- Ecem  
+- Furkan  
+- İsra  
+
+---
+
+### 🔍 Sprint Retrospective  
+
+#### ✅ Güçlü Yönler:
+- Backend ve frontend çalışmaları eşzamanlı ve dengeli ilerledi  
+- Kod yapısı açık, düzenli ve geliştirilebilir şekilde yazıldı  
+- İletişim kesintisiz sürdürüldü, görev dağılımı net yapıldı  
+
+#### ⚠️ İyileştirme Alanları:
+- API dökümantasyonu eksik → Sprint 3’te Swagger entegrasyonu planlandı  
+- Frontend tarafında test altyapısı kurulmamış → Jest/React Testing Library araştırılacak  
+- Commit mesajlarının daha açıklayıcı olması gerekiyor → Commit format rehberi hazırlanacak  
+
+---
+
 
