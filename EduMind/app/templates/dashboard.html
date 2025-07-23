@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="content-box"> <div class="dashboard-header">
+        <h2>Kontrol Paneli</h2>
+        <a href="{{ url_for('main.create_note') }}" class="btn btn-primary">Yeni Not Oluştur</a>
+    </div>
+
+    <hr>
+
+    <div class="notes-list">
+        {% for note in notes %}
+            <article class="note-item">
+                <h3><a href="{{ url_for('main.view_note', note_id=note.id) }}">{{ note.title }}</a></h3>
+                <p class="note-meta">Oluşturulma: {{ note.date_posted.strftime('%d-%m-%Y') }}</p>
+                <p class="note-summary">{{ note.summary or 'Özet bulunmuyor.' }}</p>
+            </article>
+        {% else %}
+            <div class="empty-state">
+                <h3>Henüz hiç not oluşturmamışsınız.</h3>
+                <p>İlk notunuzu oluşturarak yapay zekanın gücünden faydalanmaya başlayın!</p>
+                <a href="{{ url_for('main.create_note') }}" class="btn btn-primary" style="margin-top: 20px;">İlk Notunu Oluştur</a>
+            </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

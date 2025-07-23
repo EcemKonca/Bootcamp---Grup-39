@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="hero-section" style="text-align: center; padding: 50px 20px;">
+        <h1>EduMind'a Hoş Geldiniz</h1>
+        <p style="font-size: 1.2em; color: #555;">Yapay Zeka Destekli Kişiselleştirilmiş Öğrenme Platformu</p>
+        <div class="hero-buttons" style="margin-top: 30px;">
+            <a href="{{ url_for('main.register') }}" style="text-decoration: none; color: white; background-color: #007bff; padding: 10px 20px; border-radius: 5px; margin: 5px;">Hemen Başla</a>
+            <a href="{{ url_for('main.login') }}" style="text-decoration: none; color: #333; background-color: #f0f0f0; padding: 10px 20px; border-radius: 5px; margin: 5px;">Giriş Yap</a>
+        </div>
+    </div>
+{% endblock %}

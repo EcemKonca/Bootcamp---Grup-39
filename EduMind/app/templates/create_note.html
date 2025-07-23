@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% from '_macros.html' import render_field %}
+
+{% block content %}
+<div class="content-box"> <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <legend class="form-title">Yeni Not Oluştur</legend>
+            {{ render_field(form.title) }}
+            {{ render_field(form.content, rows='15') }}
+        </fieldset>
+        <div class="form-field">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+</div>
+{% endblock %}

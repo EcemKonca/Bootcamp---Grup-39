@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% from '_macros.html' import render_field %}
+
+{% block content %}
+<div class="content-box"> <form method="POST" action="">
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <legend class="form-title">Yeni Hesap Oluştur</legend>
+            {{ render_field(form.username) }}
+            {{ render_field(form.email) }}
+            {{ render_field(form.password) }}
+            {{ render_field(form.confirm_password) }}
+            {{ render_field(form.age_group) }}
+        </fieldset>
+        <div class="form-field">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+    <div class="form-bottom-text">
+        <small>Zaten bir hesabın var mı? <a href="{{ url_for('main.login') }}">Giriş Yap</a></small>
+    </div>
+</div>
+{% endblock %}

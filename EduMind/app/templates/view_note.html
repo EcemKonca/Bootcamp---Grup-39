@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="note-container">
+        <article class="note">
+            <h2>{{ note.title }}</h2>
+            <p class="note-meta">Oluşturulma Tarihi: {{ note.date_posted.strftime('%Y-%m-%d') }}</p>
+            <div class="note-content">
+                {{ note.content | safe }}
+            </div>
+        </article>
+        
+        <div class="ai-features">
+            <h3>✨ Yapay Zeka Analizi</h3>
+            <div class="ai-summary">
+                <h4>Özet</h4>
+                <p>{{ note.summary }}</p>
+            </div>
+            <div class="ai-keywords">
+                <h4>Anahtar Kelimeler</h4>
+                <p>
+                    {% for keyword in note.keywords.split(',') %}
+                        <span class="keyword-tag">{{ keyword.strip() }}</span>
+                    {% endfor %}
+                </p>
+            </div>
+            
+            <hr>
+
+            <h3>🎓 Bilgini Test Et</h3>
+            <p>Bu notun içeriğinden anında bir quiz oluştur!</p>
+            <button id="generate-quiz-btn" data-note-id="{{ note.id }}">Quiz Oluştur</button>
+            <div id="quiz-container" class="hidden">
+                </div>
+            <div id="loading-spinner" class="hidden">
+                <p>Quiz oluşturuluyor, lütfen bekleyin...</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

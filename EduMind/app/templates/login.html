@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% from '_macros.html' import render_field %}
+
+{% block content %}
+<div class="content-box">  <form method="POST" action="">
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset class="form-group">
+            <legend class="form-title">Giriş Yap</legend>
+            {{ render_field(form.email) }}
+            {{ render_field(form.password) }}
+            <div class="form-check">
+                {{ form.remember(class="form-check-input") }}
+                {{ form.remember.label(class="form-check-label") }}
+            </div>
+        </fieldset>
+        <div class="form-field">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+    <div class="form-bottom-text">
+        <small>Hesabın yok mu? <a href="{{ url_for('main.register') }}">Hemen Kayıt Ol</a></small>
+    </div>
+</div>
+{% endblock %}
