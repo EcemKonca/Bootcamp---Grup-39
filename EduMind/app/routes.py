@@ -96,3 +96,28 @@ def generate_quiz(note_id):
         return jsonify(quiz_data), 500
         
     return jsonify(quiz_data)
+
+
+@main_bp.route("/stats")
+@login_required
+def stats():
+    notes = Note.query.filter_by(author=current_user).all()
+    total_notes = len(notes)
+    total_words = sum(len(note.content.split()) for note in notes)
+    avg_words = total_words / total_notes if total_notes > 0 else 0
+
+    # En çok geçen kelimeler
+    from collections import Counter
+    words = []
+    for note in notes:
+        words.extend(note.content.lower().split())
+    common_words = Counter(words).most_common(5)
+
+    return render_template(
+        "stats.html",
+        title="Not İstatistikleri",
+        total_notes=total_notes,
+        total_words=total_words,
+        avg_words=avg_words,
+        common_words=common_words
+    )
