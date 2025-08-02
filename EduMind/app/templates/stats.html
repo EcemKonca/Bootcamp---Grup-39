@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Not İstatistikleri</h1>
+
+<p>Toplam Not Sayısı: <strong>{{ total_notes }}</strong></p>
+<p>Toplam Kelime Sayısı: <strong>{{ total_words }}</strong></p>
+<p>Ortalama Kelime Sayısı: <strong>{{ avg_words | round(2) }}</strong></p>
+
+<h3>En Çok Geçen 5 Kelime</h3>
+<ul>
+{% for word, count in common_words %}
+    <li>{{ word }}: {{ count }} kez</li>
+{% endfor %}
+</ul>
+{% endblock %}
