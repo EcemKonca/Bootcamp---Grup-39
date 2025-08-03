@@ -1,0 +1,528 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="ai-demo-container">
+    <div class="demo-header">
+        <h2>🤖 AI Demo - Metin Analizi Test Alanı</h2>
+        <p class="demo-description">
+            Yapay zeka özelliklerini burada test edebilirsiniz. 
+            Bir metin girin ve AI'ın nasıl özetlediğini, anahtar kelimeler çıkardığını görin!
+        </p>
+    </div>
+
+    <div class="demo-content">
+        <!-- Metin Girişi -->
+        <div class="input-section">
+            <h3>📝 Test Metni Girin</h3>
+            <div class="demo-examples">
+                <button onclick="loadExample(1)" class="example-btn">📚 Örnek: Eğitim</button>
+                <button onclick="loadExample(2)" class="example-btn">🔬 Örnek: Bilim</button>
+                <button onclick="loadExample(3)" class="example-btn">📖 Örnek: Tarih</button>
+            </div>
+            <textarea 
+                id="demo-text" 
+                placeholder="Buraya analiz etmek istediğiniz metni yazın... (En az 50 karakter)"
+                rows="8"
+            ></textarea>
+            <div class="demo-controls">
+                <button onclick="analyzeText()" class="btn btn-primary">
+                    🧠 AI ile Analiz Et
+                </button>
+                <button onclick="clearText()" class="btn btn-outline">
+                    🗑️ Temizle
+                </button>
+            </div>
+        </div>
+
+        <!-- Sonuçlar -->
+        <div class="results-section" id="results-section" style="display: none;">
+            <h3>🎯 AI Analiz Sonuçları</h3>
+            
+            <div class="result-cards">
+                <div class="result-card summary-card">
+                    <h4>📄 Özet</h4>
+                    <div id="ai-summary" class="result-content">
+                        <!-- AI özeti buraya gelecek -->
+                    </div>
+                </div>
+
+                <div class="result-card keywords-card">
+                    <h4>🔑 Anahtar Kelimeler</h4>
+                    <div id="ai-keywords" class="result-content">
+                        <!-- Anahtar kelimeler buraya gelecek -->
+                    </div>
+                </div>
+
+                <div class="result-card stats-card">
+                    <h4>📊 İstatistikler</h4>
+                    <div id="ai-stats" class="result-content">
+                        <!-- İstatistikler buraya gelecek -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Oluşturma -->
+            <div class="quiz-section">
+                <button onclick="generateDemoQuiz()" class="btn btn-secondary">
+                    🎮 Bu Metinden Quiz Oluştur
+                </button>
+                <div id="demo-quiz" class="demo-quiz-content"></div>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading-section" id="loading-section" style="display: none;">
+            <div class="loading-spinner">🤖</div>
+            <p>AI analiz ediyor...</p>
+        </div>
+    </div>
+
+    <!-- API Anahtarı Uyarısı -->
+    <div class="api-warning">
+        <h4>⚠️ API Anahtarı Bilgisi</h4>
+        <p>
+            Gerçek AI analizi için Google Gemini API anahtarı gereklidir. 
+            <a href="https://makersuite.google.com/app/apikey" target="_blank" rel="noopener">
+                Buradan ücretsiz API anahtarı alabilirsiniz
+            </a> ve <code>config.py</code> dosyasına ekleyebilirsiniz.
+        </p>
+        <p>
+            <strong>Demo Modu:</strong> API anahtarı yoksa örnek cevaplar gösterilir.
+        </p>
+    </div>
+</div>
+
+<!-- Styles -->
+<style>
+.ai-demo-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.demo-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 30px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 15px;
+}
+
+.demo-header h2 {
+    margin: 0 0 15px 0;
+    font-size: 2.2rem;
+}
+
+.demo-description {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin: 0;
+}
+
+.demo-content {
+    display: grid;
+    gap: 30px;
+}
+
+.input-section {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.input-section h3 {
+    margin-top: 0;
+    color: #333;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 10px;
+}
+
+.demo-examples {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.example-btn {
+    padding: 8px 15px;
+    border: 2px solid #007bff;
+    background: white;
+    color: #007bff;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.example-btn:hover {
+    background: #007bff;
+    color: white;
+}
+
+#demo-text {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: 1.5;
+    resize: vertical;
+    min-height: 150px;
+}
+
+#demo-text:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.demo-controls {
+    margin-top: 20px;
+    text-align: center;
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.results-section {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.results-section h3 {
+    margin-top: 0;
+    color: #333;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 10px;
+}
+
+.result-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.result-card {
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #007bff;
+}
+
+.summary-card {
+    background: #e8f5e8;
+    border-left-color: #28a745;
+}
+
+.keywords-card {
+    background: #e3f2fd;
+    border-left-color: #2196f3;
+}
+
+.stats-card {
+    background: #fff3e0;
+    border-left-color: #ff9800;
+}
+
+.result-card h4 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.result-content {
+    line-height: 1.6;
+}
+
+.quiz-section {
+    text-align: center;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #6f42c1;
+}
+
+.demo-quiz-content {
+    margin-top: 20px;
+    text-align: left;
+}
+
+.loading-section {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.loading-spinner {
+    font-size: 3rem;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.api-warning {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 30px;
+}
+
+.api-warning h4 {
+    margin-top: 0;
+    color: #856404;
+}
+
+.api-warning p {
+    margin-bottom: 10px;
+    color: #856404;
+}
+
+.api-warning a {
+    color: #007bff;
+    font-weight: bold;
+}
+
+.api-warning code {
+    background: #f8f9fa;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .result-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .demo-controls {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .demo-examples {
+        justify-content: center;
+    }
+}
+</style>
+
+<!-- JavaScript -->
+<script>
+const examples = {
+    1: `Eğitim, bireylerin bilgi, beceri, değer ve tutumlarını geliştiren sistematik bir süreçtir. 
+Modern eğitim sistemleri, öğrencilerin sadece akademik bilgi edinmelerine değil, aynı zamanda 
+eleştirel düşünme, problem çözme ve yaratıcılık becerilerini de geliştirmelerine odaklanır. 
+Teknolojinin eğitime entegrasyonu, öğrenme deneyimlerini zenginleştirmekte ve kişiselleştirilmiş 
+öğretim imkânları sunmaktadır. Eğitim alanındaki en önemli gelişmelerden biri, yapay zeka 
+destekli öğrenme platformlarının ortaya çıkmasıdır. Bu platformlar, her öğrencinin öğrenme 
+stiline ve hızına uygun içerikler sunarak eğitimde bireyselleştirme sağlamaktadır.`,
+    
+    2: `Bilim, doğal dünyayı sistematik olarak inceleyen ve evrensel yasaları keşfetmeye çalışan 
+bir disiplindir. Bilimsel yöntem, gözlem, hipotez kurma, deney yapma ve sonuçları analiz etme 
+aşamalarından oluşur. Bu yöntem sayesinde bilim insanları, objektif ve doğrulanabilir bilgiler 
+üretirler. Modern bilim, fizik, kimya, biyoloji, matematik gibi temel dalları içerir. Her dal, 
+kendi içinde uzmanlaşmış alt dalları barındırır. Bilimsel araştırmalar, toplumsal sorunlara 
+çözüm üretmekte ve teknolojik gelişmelere katkı sağlamaktadır. Günümüzde bilim, 
+disiplinlerarası çalışmalara önem vermekte ve karmaşık problemleri çözmek için farklı 
+alanların birleştirilmesini teşvik etmektedir.`,
+    
+    3: `Tarih, geçmişte yaşanan olayları, gelişmeleri ve değişimleri inceleyen bir bilim dalıdır. 
+Tarihçiler, yazılı belgeler, arkeolojik kalıntılar ve sözlü gelenekleri kullanarak geçmişi 
+yeniden yapılandırmaya çalışırlar. Tarih öğrenimi, toplumları ve medeniyetleri anlamak için 
+kritik öneme sahiptir. Geçmişin deneyimlerinden yararlanarak gelecek için dersler çıkarmak 
+mümkündür. Tarihsel olaylar, ekonomik, sosyal, politik ve kültürel faktörlerin etkileşimi 
+sonucu ortaya çıkar. Bu nedenle tarih, çok boyutlu bir perspektifle incelenmelidir. Modern 
+tarih yazımı, sadece siyasi olayları değil, sıradan insanların yaşamlarını, kültürlerini 
+ve deneyimlerini de kapsamaktadır.`
+};
+
+function loadExample(num) {
+    document.getElementById('demo-text').value = examples[num];
+}
+
+function clearText() {
+    document.getElementById('demo-text').value = '';
+    document.getElementById('results-section').style.display = 'none';
+}
+
+async function analyzeText() {
+    const text = document.getElementById('demo-text').value.trim();
+    
+    if (text.length < 50) {
+        alert('Lütfen en az 50 karakterlik bir metin girin.');
+        return;
+    }
+    
+    // Loading göster
+    document.getElementById('results-section').style.display = 'none';
+    document.getElementById('loading-section').style.display = 'block';
+    
+    try {
+        const response = await fetch('/api/analyze_text', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ text: text })
+        });
+        
+        const data = await response.json();
+        
+        // Loading gizle
+        document.getElementById('loading-section').style.display = 'none';
+        
+        if (data.error) {
+            alert('Analiz hatası: ' + data.error);
+            return;
+        }
+        
+        displayResults(data);
+        
+    } catch (error) {
+        document.getElementById('loading-section').style.display = 'none';
+        alert('Bağlantı hatası: ' + error.message);
+    }
+}
+
+function displayResults(data) {
+    // Özet
+    document.getElementById('ai-summary').innerHTML = `
+        <p>${data.summary}</p>
+        ${data.mode === 'demo' ? '<div class="demo-badge">Demo Modu</div>' : 
+          data.mode === 'ai' ? '<div class="ai-badge">AI Destekli</div>' : ''}
+    `;
+    
+    // Anahtar kelimeler
+    const keywordsHtml = data.keywords ? 
+        data.keywords.split(',').map(k => 
+            `<span class="keyword-tag">${k.trim()}</span>`
+        ).join('') : 
+        '<span class="no-keywords">Anahtar kelime bulunamadı</span>';
+    
+    document.getElementById('ai-keywords').innerHTML = keywordsHtml;
+    
+    // İstatistikler
+    document.getElementById('ai-stats').innerHTML = `
+        <div class="stat-grid">
+            <div class="stat-item">
+                <span class="stat-number">${data.word_count || 0}</span>
+                <span class="stat-label">Kelime</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">${document.getElementById('demo-text').value.length}</span>
+                <span class="stat-label">Karakter</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">${Math.round((data.word_count || 0) * 0.5)}</span>
+                <span class="stat-label">Dakika Okuma</span>
+            </div>
+        </div>
+    `;
+    
+    // Sonuçları göster
+    document.getElementById('results-section').style.display = 'block';
+    document.getElementById('results-section').scrollIntoView({behavior: 'smooth'});
+}
+
+function generateDemoQuiz() {
+    const text = document.getElementById('demo-text').value.trim();
+    
+    if (!text) {
+        alert('Önce bir metin girin ve analiz edin.');
+        return;
+    }
+    
+    // Demo quiz göster
+    document.getElementById('demo-quiz').innerHTML = `
+        <div class="quiz-demo">
+            <h5>🎯 Demo Quiz</h5>
+            <p><em>Bu özellik şu anda geliştirme aşamasındadır. 
+            Gerçek notlarınızda AI quiz özelliğini kullanabilirsiniz!</em></p>
+            <a href="/note/new" class="btn btn-primary">Not Oluşturup Quiz Dene</a>
+        </div>
+    `;
+}
+</script>
+
+<style>
+.demo-badge, .ai-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75em;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.demo-badge {
+    background: #ffc107;
+    color: #212529;
+}
+
+.ai-badge {
+    background: #28a745;
+    color: white;
+}
+
+.keyword-tag {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 0.85em;
+    font-weight: 500;
+    margin: 2px;
+    display: inline-block;
+}
+
+.no-keywords {
+    color: #999;
+    font-style: italic;
+}
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.stat-item {
+    text-align: center;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.stat-number {
+    display: block;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #007bff;
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 5px;
+}
+
+.quiz-demo {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+}
+</style>
+{% endblock %} 

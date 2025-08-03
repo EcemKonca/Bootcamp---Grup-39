@@ -13,26 +13,107 @@ EduMind, yapay zeka teknolojilerini kullanarak kişiselleştirilmiş öğrenme d
 ## 🛠️ Teknolojiler
 
 ### Backend
-- **FastAPI**: Modern, hızlı Python web framework
+- **Flask**: Modern Python web framework
 - **SQLAlchemy**: ORM ve veritabanı yönetimi
 - **SQLite**: Hafif veritabanı çözümü
+- **Google Gemini AI**: Yapay zeka analizi
 - **JWT**: Güvenli kimlik doğrulama
 - **Pydantic**: Veri validasyonu
 
 ### Frontend
-- **React**: Modern JavaScript UI kütüphanesi
-- **TypeScript**: Type-safe geliştirme
-- **Tailwind CSS**: Utility-first CSS framework
-- **React Router**: Client-side routing
-- **Context API**: State management
+- **Jinja2 Templates**: Server-side rendering
+- **Bootstrap CSS**: Responsive tasarım
+- **JavaScript**: İnteraktif özellikler
+- **Modern CSS**: Gradient tasarımlar ve animasyonlar
+
+## 🔧 Kurulum
+
+### 1. Projeyi İndirin
+```bash
+git clone https://github.com/username/EduMind.git
+cd EduMind
+```
+
+### 2. Python Paketlerini Yükleyin
+```bash
+pip install -r requirements.txt
+```
+
+### 3. API Anahtarı Ayarlayın
+
+#### **🔑 Gemini API Anahtarı Alın:**
+1. [Google AI Studio](https://makersuite.google.com/app/apikey)'ya gidin
+2. Ücretsiz API anahtarını oluşturun
+3. Anahtarı kopyalayın
+
+#### **🔒 Güvenli Kurulum (Önerilen):**
+
+**Seçenek A: Environment Variable (Üretim için)**
+```bash
+export GEMINI_API_KEY="your_api_key_here"
+```
+
+**Seçenek B: config_local.py (Geliştirme için)**
+```python
+# config_local.py dosyası oluşturun
+GEMINI_API_KEY = 'your_api_key_here'
+```
+
+### 4. Uygulamayı Başlatın
+```bash
+python run.py
+```
+
+### 5. Tarayıcıda Açın
+```
+http://localhost:5000
+```
+
+## 🔒 GitHub Güvenliği
+
+Bu proje API anahtarlarını güvenli şekilde yönetir:
+
+- ✅ `.gitignore` dosyası hassas bilgileri korur
+- ✅ `config_local.py` yerel geliştirme için kullanılır
+- ✅ Environment variable desteği vardır
+- ✅ API anahtarları GitHub'a yüklenmez
+
+**⚠️ Önemli:** `config_local.py` dosyanızı asla GitHub'a yüklemeyin!
+
+## 🎯 Kullanım
+
+### **📝 Not Oluşturma:**
+1. "Yeni Not" butonuna tıklayın
+2. Başlık ve içerik girin
+3. AI otomatik olarak özet ve anahtar kelimeler oluşturur
+
+### **🧠 AI Analizi:**
+1. Dashboard'dan bir nota "🧠 Analiz" tıklayın
+2. Detaylı AI analizini görün
+3. "Quiz Oluştur" ile test soruları üretin
+
+### **🎮 Demo Modu:**
+- API anahtarı olmadan da çalışır
+- Örnek özetler ve analizler gösterir
+- Gerçek AI için API anahtarı gereklidir
+
+## 📊 Demo vs Gerçek AI
+
+| Özellik | Demo Modu | Gerçek AI |
+|---------|-----------|-----------|
+| Özetleme | ✅ Örnek cevaplar | ✅ Gerçek analiz |
+| Anahtar Kelimeler | ✅ Sabit kelimeler | ✅ Dinamik çıkarım |
+| Quiz Oluşturma | ✅ Örnek sorular | ✅ İçerik bazlı sorular |
+| Yaş Grubu Uyarlaması | ❌ | ✅ |
+| Maliyet | 🆓 Ücretsiz | 🆓 Ücretsiz (limitle) |
 
 # 🌀 Sprint 1
 
 ---
 
 ## 📝 Sprint Notları  
-User Story’ler, product backlog içerisine yazılmıştır.  
-Her bir backlog item’ına tıklandığında ilgili kullanıcı hikayesinin detayı okunabilir durumdadır.  
+User Story'ler, product backlog içerisine yazılmıştır.  
+Her bir backlog item'ına tıklandığında ilgili kullanıcı hikayesinin detayı okunabilir durumdadır.  
 Projenin temel işlevleri belirlendi ve görevler kategorilere ayrılarak planlandı.
 
 ---
@@ -43,7 +124,7 @@ Projenin temel işlevleri belirlendi ve görevler kategorilere ayrılarak planla
 ---
 
 ## 📐 Puan Tamamlama Mantığı  
-Proje genelinde 300 puanlık bir backlog belirlenmiştir.Bu görevler 3 sprint’e bölünmüş ve ilk sprintte 100 puanlık iş yapılması hedeflenmiştir. İlk sprint, proje fikrinin netleştirilmesi ve temel planlama aşamalarını kapsayacak şekilde düzenlenmiştir.
+Proje genelinde 300 puanlık bir backlog belirlenmiştir.Bu görevler 3 sprint'e bölünmüş ve ilk sprintte 100 puanlık iş yapılması hedeflenmiştir. İlk sprint, proje fikrinin netleştirilmesi ve temel planlama aşamalarını kapsayacak şekilde düzenlenmiştir.
 
 ---
 
@@ -64,8 +145,8 @@ Sprint süresince görev takibi **Trello** üzerinden yapılmıştır.
 - Proje fikri belirlendi: **EduMind – AI Destekli Kişiselleştirilmiş Öğrenme Koçu**
 - Hedef kullanıcı kitlesi ve çözülmek istenen problem netleştirildi  
 - Kullanıcı senaryoları ve temel fonksiyon listesi hazırlandı  
-- Kullanılacak teknolojiler belirlendi: **Python, FastAPI, Gemini API**  
-- Product backlog oluşturularak story point’ler atandı  
+- Kullanılacak teknolojiler belirlendi: **Python, Flask, Gemini API**  
+- Product backlog oluşturularak story point'ler atandı  
 - Ekip içi görev dağılımı ve roadmap planlaması tamamlandı  
 
 ---
@@ -100,8 +181,8 @@ Kullanıcı senaryoları ve temel işlevlerin net oluşu, sonraki sprintlere sa�
 
 ### 📝 Sprint Notları  
 Bu sprintte projenin temel yazılım altyapısı oluşturuldu.  
-Backend tarafında FastAPI ile API yapısı kuruldu, kullanıcı kimlik doğrulama ve not yönetimi sistemleri geliştirildi.  
-Frontend tarafında ise React ile kullanıcı arayüzü iskeleti kuruldu.  
+Backend tarafında Flask ile API yapısı kuruldu, kullanıcı kimlik doğrulama ve not yönetimi sistemleri geliştirildi.  
+Frontend tarafında ise modern responsive tasarım ile kullanıcı arayüzü geliştirildi.  
 Tasarım, veri akışı ve kullanıcı etkileşimi temel alınarak component yapısı oturtuldu.  
 
 ---
@@ -112,7 +193,7 @@ Tasarım, veri akışı ve kullanıcı etkileşimi temel alınarak component yap
 ---
 
 ### 📐 Puan Tamamlama Mantığı  
-Toplam 300 puanlık backlog’un ikinci sprintinde, ürünün teknik altyapısının kodlandığı 100 puanlık işler yapılmıştır.
+Toplam 300 puanlık backlog'un ikinci sprintinde, ürünün teknik altyapısının kodlandığı 100 puanlık işler yapılmıştır.
 
 ---
 
@@ -132,17 +213,23 @@ Toplam 300 puanlık backlog’un ikinci sprintinde, ürünün teknik altyapısı
 ### 🖥️ Ürün Durumu (Sprint 2)
 
 #### ✅ Backend Geliştirmeleri
-- FastAPI ile temel proje yapısı kuruldu  
-- Kullanıcı kayıt ve giriş sistemi geliştirildi (JWT Authentication)  
-- Not ve quiz işlemleri için CRUD endpoint’leri yazıldı  
+- Flask ile temel proje yapısı kuruldu  
+- Kullanıcı kayıt ve giriş sistemi geliştirildi (Flask-Login Authentication)  
+- Not ve quiz işlemleri için CRUD endpoint'leri yazıldı  
 - Veritabanı bağlantısı kuruldu ve modeller oluşturuldu  
 - `requirements.txt` ile bağımlılıklar listelendi  
 
 #### ✅ Frontend Geliştirmeleri
 - Giriş/kayıt sayfaları tasarlandı  
 - Form bileşenleri geliştirildi  
-- Auth context ile oturum yönetimi kuruldu  
-- Backend ile ilk API entegrasyonu başarıyla yapıldı  
+- Flask-Login ile oturum yönetimi kuruldu  
+- Modern CSS tasarımı ve responsive layout eklendi  
+
+#### ✅ AI Entegrasyonu
+- Google Gemini API entegrasyonu tamamlandı
+- Akıllı özetleme ve anahtar kelime çıkarma
+- Quiz oluşturma özellikleri
+- Demo modu ile güvenli geliştirme
 
 ---
 
@@ -151,6 +238,7 @@ Toplam 300 puanlık backlog’un ikinci sprintinde, ürünün teknik altyapısı
 - Projenin teknik altyapısı tamamlandı ve fonksiyonel hale getirildi  
 - Frontend ve backend taraflarının entegre çalışması sağlandı  
 - Kod yapısı modüler, anlaşılır ve sürdürülebilir olarak inşa edildi  
+- AI entegrasyonu başarıyla gerçekleştirildi
 
 **Katılımcılar:**  
 - Ecem  
@@ -165,12 +253,31 @@ Toplam 300 puanlık backlog’un ikinci sprintinde, ürünün teknik altyapısı
 - Backend ve frontend çalışmaları eşzamanlı ve dengeli ilerledi  
 - Kod yapısı açık, düzenli ve geliştirilebilir şekilde yazıldı  
 - İletişim kesintisiz sürdürüldü, görev dağılımı net yapıldı  
+- AI entegrasyonu beklenenden daha başarılı oldu
 
 #### ⚠️ İyileştirme Alanları:
-- API dökümantasyonu eksik → Sprint 3’te Swagger entegrasyonu planlandı  
-- Frontend tarafında test altyapısı kurulmamış → Jest/React Testing Library araştırılacak  
-- Commit mesajlarının daha açıklayıcı olması gerekiyor → Commit format rehberi hazırlanacak  
+- API güvenliği ve .gitignore yapılandırması tamamlandı  
+- Frontend tarafında daha fazla interaktivite eklenebilir  
+- Unit test altyapısı bir sonraki sprintte planlanacak  
 
 ---
+
+## 🤝 Katkıda Bulunma
+
+1. Fork yapın
+2. Feature branch oluşturun (`git checkout -b feature/amazing-feature`)
+3. Commit yapın (`git commit -m 'Add amazing feature'`)
+4. Push yapın (`git push origin feature/amazing-feature`)
+5. Pull Request açın
+
+## 📄 Lisans
+
+Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için LICENSE dosyasına bakın.
+
+## 🌟 Teşekkürler
+
+- Google Gemini AI ekibine
+- Flask toplulukuna
+- Tüm açık kaynak katkıda bulunanlar
 
 

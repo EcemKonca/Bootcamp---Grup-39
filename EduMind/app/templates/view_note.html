@@ -1,40 +1,211 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="container">
     <div class="note-container">
-        <article class="note">
-            <h2>{{ note.title }}</h2>
-            <p class="note-meta">Oluşturulma Tarihi: {{ note.date_posted.strftime('%Y-%m-%d') }}</p>
-            <div class="note-content">
-                {{ note.content | safe }}
-            </div>
-        </article>
-        
-        <div class="ai-features">
-            <h3>✨ Yapay Zeka Analizi</h3>
-            <div class="ai-summary">
-                <h4>Özet</h4>
-                <p>{{ note.summary }}</p>
-            </div>
-            <div class="ai-keywords">
-                <h4>Anahtar Kelimeler</h4>
-                <p>
-                    {% for keyword in note.keywords.split(',') %}
-                        <span class="keyword-tag">{{ keyword.strip() }}</span>
-                    {% endfor %}
-                </p>
-            </div>
-            
-            <hr>
-
-            <h3>🎓 Bilgini Test Et</h3>
-            <p>Bu notun içeriğinden anında bir quiz oluştur!</p>
-            <button id="generate-quiz-btn" data-note-id="{{ note.id }}">Quiz Oluştur</button>
-            <div id="quiz-container" class="hidden">
-                </div>
-            <div id="loading-spinner" class="hidden">
-                <p>Quiz oluşturuluyor, lütfen bekleyin...</p>
+        <div class="note-header">
+            <h1>{{ note.title }}</h1>
+            <div class="note-meta">
+                📅 {{ note.date_posted.strftime('%d.%m.%Y %H:%M') }} | 
+                👤 {{ note.author.username }} |
+                📊 {{ note.content|length }} karakter
             </div>
         </div>
+        
+        <div class="note-content">
+            <h3>📝 Not İçeriği</h3>
+            <div class="content-text">
+                {{ note.content }}
+            </div>
+        </div>
+
+        {% if note.summary %}
+        <div class="ai-summary">
+            <h3>🤖 AI Özeti</h3>
+            <p>{{ note.summary }}</p>
+        </div>
+        {% endif %}
+
+        {% if note.keywords %}
+        <div class="ai-keywords">
+            <h3>🔑 Anahtar Kelimeler</h3>
+            <div class="keywords">
+                {% for keyword in note.keywords.split(',') %}
+                <span class="keyword">{{ keyword.strip() }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <hr>
+
+        <h3>🎓 Quiz Oluştur</h3>
+        <p>Bu metinden 5 soru oluştur!</p>
+        
+        <button id="quiz-btn" onclick="createQuiz('{{ note.id }}')" style="background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+            📝 Quiz Oluştur
+        </button>
+        
+        <div id="quiz-result" style="margin-top: 20px;"></div>
     </div>
+</div>
+
+<script>
+function createQuiz(noteId) {
+    console.log('Quiz oluşturuluyor, Note ID:', noteId);
+    
+    const btn = document.getElementById('quiz-btn');
+    const result = document.getElementById('quiz-result');
+    
+    // Butonu devre dışı bırak
+    btn.disabled = true;
+    btn.innerHTML = '⏳ Quiz oluşturuluyor...';
+    
+    // Sonuç alanını temizle
+    result.innerHTML = '<p>🤖 AI quiz oluşturuyor, lütfen bekleyin...</p>';
+    
+    fetch('/note/' + noteId + '/generate_quiz', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            difficulty: 'medium'
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Quiz verisi geldi:', data);
+        
+        // Butonu normale döndür
+        btn.disabled = false;
+        btn.innerHTML = '📝 Quiz Oluştur';
+        
+        if (data.quiz && data.quiz.length > 0) {
+            let html = '<h4>🎮 Quiz Soruları (' + data.quiz.length + ' adet)</h4>';
+            
+            data.quiz.forEach((question, index) => {
+                html += '<div style="background: #f8f9fa; margin: 15px 0; padding: 20px; border-radius: 8px; border-left: 4px solid #007bff;">';
+                html += '<h5>Soru ' + (index + 1) + ': ' + question.question + '</h5>';
+                
+                if (question.options) {
+                    html += '<ul>';
+                    question.options.forEach((option, i) => {
+                        const letter = String.fromCharCode(65 + i);
+                        html += '<li><strong>' + letter + ')</strong> ' + option + '</li>';
+                    });
+                    html += '</ul>';
+                }
+                
+                html += '<div style="background: #d1ecf1; padding: 10px; margin-top: 10px; border-radius: 4px;">';
+                html += '<strong>✅ Doğru Cevap:</strong> ' + (question.correct_answer || 'Belirtilmemiş') + '<br>';
+                if (question.explanation) {
+                    html += '<strong>💡 Açıklama:</strong> ' + question.explanation;
+                }
+                html += '</div>';
+                html += '</div>';
+            });
+            
+            result.innerHTML = html;
+        } else {
+            result.innerHTML = '<div style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px;">❌ Quiz oluşturulamadı: ' + (data.error || 'Bilinmeyen hata') + '</div>';
+        }
+    })
+    .catch(error => {
+        console.error('Quiz hatası:', error);
+        
+        // Butonu normale döndür
+        btn.disabled = false;
+        btn.innerHTML = '📝 Quiz Oluştur';
+        
+        result.innerHTML = '<div style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px;">❌ Bağlantı hatası: ' + error.message + '</div>';
+    });
+}
+</script>
+
+<style>
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.note-container {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.note-header h1 {
+    color: #2c5aa0;
+    margin-bottom: 10px;
+}
+
+.note-meta {
+    color: #666;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.note-content {
+    margin: 20px 0;
+}
+
+.content-text {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #28a745;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+.ai-summary {
+    background: #e3f2fd;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+    border-left: 4px solid #2196f3;
+}
+
+.ai-keywords {
+    margin: 20px 0;
+}
+
+.keywords {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.keyword {
+    background: #6f42c1;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+#quiz-btn {
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+#quiz-btn:hover:not(:disabled) {
+    background: #0056b3 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,123,255,0.3);
+}
+
+#quiz-btn:disabled {
+    background: #6c757d !important;
+    cursor: not-allowed;
+    transform: none;
+}
+</style>
 {% endblock %}

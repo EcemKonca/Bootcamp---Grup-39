@@ -6,54 +6,125 @@ document.addEventListener('DOMContentLoaded', function() {
     if (generateQuizBtn) {
         generateQuizBtn.addEventListener('click', function() {
             const noteId = this.dataset.noteId;
+            console.log('Quiz butonu tıklandı, note ID:', noteId);
             
             // Butonu gizle ve yükleme animasyonunu göster
             generateQuizBtn.style.display = 'none';
             loadingSpinner.classList.remove('hidden');
             quizContainer.innerHTML = ''; // Eski quizi temizle
+            quizContainer.classList.add('hidden'); // Quiz container'ı gizle
+
+            console.log('Quiz API request başlatılıyor...');
 
             fetch(`/note/${noteId}/generate_quiz`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
-                }
+                },
+                body: JSON.stringify({
+                    difficulty: 'medium'
+                })
             })
-            .then(response => response.json())
+            .then(response => {
+                console.log('Response alındı:', response.status, response.statusText);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
             .then(data => {
+                console.log('Quiz data alındı:', data);
                 loadingSpinner.classList.add('hidden');
+                generateQuizBtn.style.display = 'block'; // Butonu geri getir
+                
                 if (data.error) {
-                    quizContainer.innerHTML = `<p class="error">${data.error}</p>`;
-                    generateQuizBtn.style.display = 'block'; // Hata olursa butonu geri getir
+                    console.error('Backend hatası:', data.error);
+                    quizContainer.innerHTML = `<div class="error">❌ Hata: ${data.error}</div>`;
+                    quizContainer.classList.remove('hidden');
+                } else if (data.quiz && Array.isArray(data.quiz)) {
+                    console.log('Quiz gösteriliyor, soru sayısı:', data.quiz.length);
+                    displayQuiz(data.quiz, data.mode || 'unknown');
                 } else {
-                    displayQuiz(data.quiz);
+                    console.error('Geçersiz quiz formatı:', data);
+                    quizContainer.innerHTML = `<div class="error">❌ Quiz formatı geçersiz</div>`;
+                    quizContainer.classList.remove('hidden');
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
+                console.error('Quiz oluşturma hatası:', error);
                 loadingSpinner.classList.add('hidden');
-                quizContainer.innerHTML = `<p class="error">Quiz oluşturulurken bir ağ hatası oluştu.</p>`;
                 generateQuizBtn.style.display = 'block';
+                
+                let errorMessage = 'Bilinmeyen hata oluştu';
+                if (error.message.includes('Failed to fetch')) {
+                    errorMessage = 'Sunucuya bağlanılamadı. Lütfen tekrar deneyin.';
+                } else if (error.message.includes('HTTP 500')) {
+                    errorMessage = 'Sunucu hatası oluştu. Lütfen daha sonra tekrar deneyin.';
+                } else if (error.message.includes('HTTP 403')) {
+                    errorMessage = 'Bu işlem için yetkiniz bulunmuyor.';
+                } else {
+                    errorMessage = error.message;
+                }
+                
+                quizContainer.innerHTML = `<div class="error">❌ Quiz oluşturulurken hata: ${errorMessage}</div>`;
+                quizContainer.classList.remove('hidden');
             });
         });
     }
 });
 
-function displayQuiz(quiz) {
+function displayQuiz(quiz, mode = 'unknown') {
     const quizContainer = document.getElementById('quiz-container');
     quizContainer.classList.remove('hidden');
     
-    let quizHTML = '<h3>Oluşturulan Quiz</h3>';
-    quiz.forEach((q, index) => {
-        quizHTML += `<div class="quiz-question">`;
-        quizHTML += `<p><b>${index + 1}. ${q.question}</b></p>`;
-        quizHTML += `<ul class="quiz-options">`;
-        q.options.forEach(option => {
-            quizHTML += `<li>${option}</li>`;
+    let quizHTML = '<div class="quiz-header">';
+    quizHTML += '<h3>🎮 Oluşturulan Quiz</h3>';
+    
+    // Mode badge ekle
+    if (mode === 'demo') {
+        quizHTML += '<span class="mode-badge demo">📝 Demo Modu</span>';
+    } else if (mode === 'ai') {
+        quizHTML += '<span class="mode-badge ai">🤖 AI Destekli</span>';
+    }
+    
+    quizHTML += '</div>';
+    
+    if (!quiz || quiz.length === 0) {
+        quizHTML += '<div class="error">❌ Quiz soruları bulunamadı</div>';
+    } else {
+        quiz.forEach((q, index) => {
+            quizHTML += `<div class="quiz-question">`;
+            quizHTML += `<h4>${index + 1}. ${q.question}</h4>`;
+            
+            if (q.options && Array.isArray(q.options)) {
+                quizHTML += `<ul class="quiz-options">`;
+                q.options.forEach((option, optIndex) => {
+                    const letter = String.fromCharCode(65 + optIndex); // A, B, C, D
+                    quizHTML += `<li><strong>${letter})</strong> ${option}</li>`;
+                });
+                quizHTML += `</ul>`;
+            }
+            
+            if (q.correct_answer) {
+                quizHTML += `<div class="correct-answer">✅ <strong>Doğru Cevap:</strong> ${q.correct_answer}</div>`;
+            }
+            
+            if (q.explanation) {
+                quizHTML += `<div class="explanation">💡 <strong>Açıklama:</strong> ${q.explanation}</div>`;
+            }
+            
+            quizHTML += `</div>`;
         });
-        quizHTML += `</ul>`;
-        quizHTML += `<p class="correct-answer"><i>Doğru Cevap: ${q.correct_answer}</i></p>`;
-        quizHTML += `</div>`;
-    });
+        
+        // Quiz bitişi
+        quizHTML += '<div class="quiz-footer">';
+        quizHTML += `<p><strong>🎯 Toplam ${quiz.length} soru oluşturuldu!</strong></p>`;
+        quizHTML += '<button onclick="window.print()" class="btn btn-outline">🖨️ Yazdır</button>';
+        quizHTML += '</div>';
+    }
 
     quizContainer.innerHTML = quizHTML;
+    
+    // Quiz container'a scroll yap
+    quizContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }

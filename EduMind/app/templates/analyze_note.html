@@ -1,0 +1,584 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="analyze-container">
+    <!-- Başlık ve Not Bilgileri -->
+    <div class="analyze-header">
+        <h2>🧠 AI Not Analizi</h2>
+        <div class="note-info">
+            <h3>{{ note.title }}</h3>
+            <p class="note-meta">
+                📅 Oluşturulma: {{ note.date_posted.strftime('%d-%m-%Y %H:%M') }}
+                | 📝 {{ analysis.word_count }} kelime
+            </p>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- Ana İçerik Grid -->
+    <div class="analyze-grid">
+        <!-- Sol Panel: Orijinal Not -->
+        <div class="original-content">
+            <div class="content-card">
+                <h4>📖 Orijinal Not İçeriği</h4>
+                <div class="content-box">
+                    <p>{{ note.content }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sağ Panel: AI Analizi -->
+        <div class="analysis-content">
+            <!-- Özet Bölümü -->
+            <div class="content-card summary-card">
+                <h4>🎯 AI Özeti</h4>
+                {% if analysis.mode == 'demo' %}
+                    <div class="demo-badge">Demo Modu</div>
+                {% elif analysis.mode == 'ai' %}
+                    <div class="ai-badge">AI Destekli</div>
+                {% elif analysis.mode == 'error' %}
+                    <div class="error-badge">Hata</div>
+                {% endif %}
+                
+                <div class="summary-content">
+                    <p>{{ analysis.summary }}</p>
+                </div>
+            </div>
+
+            <!-- Anahtar Kelimeler -->
+            <div class="content-card keywords-card">
+                <h4>🔑 Anahtar Kelimeler</h4>
+                <div class="keywords-container">
+                    {% if analysis.keywords %}
+                        {% for keyword in analysis.keywords.split(',') %}
+                            <span class="keyword-tag">{{ keyword.strip() }}</span>
+                        {% endfor %}
+                    {% else %}
+                        <span class="no-keywords">Anahtar kelime bulunamadı</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- İstatistikler -->
+            <div class="content-card stats-card">
+                <h4>📊 Metin İstatistikleri</h4>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-number">{{ analysis.word_count }}</span>
+                        <span class="stat-label">Kelime</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">{{ note.content|length }}</span>
+                        <span class="stat-label">Karakter</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">{{ (analysis.word_count * 0.5)|round|int }}</span>
+                        <span class="stat-label">Dakika Okuma</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Eylem Butonları -->
+    <div class="action-section">
+        <div class="action-buttons">
+            <form method="POST" style="display: inline;">
+                <button type="submit" class="btn btn-primary">
+                    🔄 Yeniden Analiz Et
+                </button>
+            </form>
+            
+            <button onclick="generateQuiz()" class="btn btn-secondary">
+                📝 Quiz Oluştur
+            </button>
+            
+            <a href="{{ url_for('main.view_note', note_id=note.id) }}" class="btn btn-outline">
+                👁️ Not Görünümü
+            </a>
+            
+            <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline">
+                🏠 Dashboard'a Dön
+            </a>
+        </div>
+    </div>
+
+    <!-- Quiz Bölümü (Dinamik) -->
+    <div id="quiz-section" class="quiz-section" style="display: none;">
+        <h4>🎮 Oluşturulan Quiz</h4>
+        <div id="quiz-container"></div>
+    </div>
+</div>
+
+<!-- CSS Stilleri -->
+<style>
+.analyze-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.analyze-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.note-info h3 {
+    color: #2c5aa0;
+    margin: 10px 0;
+}
+
+.note-meta {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.analyze-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.content-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.content-card h4 {
+    margin-top: 0;
+    color: #333;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 10px;
+}
+
+.content-box {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #007bff;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.summary-content {
+    background: #e8f5e8;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #28a745;
+}
+
+.keywords-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.keyword-tag {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 500;
+}
+
+.no-keywords {
+    color: #999;
+    font-style: italic;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.stat-item {
+    text-align: center;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.stat-number {
+    display: block;
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #007bff;
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 5px;
+}
+
+/* Durum rozetleri */
+.demo-badge {
+    background: #ffc107;
+    color: #212529;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75em;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.ai-badge {
+    background: #28a745;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75em;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.error-badge {
+    background: #dc3545;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75em;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.action-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.quiz-section {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    margin-top: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .analyze-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<!-- JavaScript -->
+<script>
+function generateQuiz() {
+    const button = event.target;
+    console.log('🎮 Quiz butonu tıklandı (analyze sayfası), note ID: {{ note.id }}');
+    
+    button.disabled = true;
+    button.innerHTML = '⏳ Quiz Oluşturuluyor...';
+    
+    console.log('🚀 Quiz API request başlatılıyor...');
+    
+    fetch(`/note/{{ note.id }}/generate_quiz`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            difficulty: 'medium'
+        })
+    })
+    .then(response => {
+        console.log('📡 Response alındı:', response.status, response.statusText);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('✅ Quiz data alındı:', data);
+        button.disabled = false;
+        button.innerHTML = '📝 Quiz Oluştur';
+        
+        if (data.error) {
+            console.error('❌ Backend hatası:', data.error);
+            alert('Quiz oluşturulurken hata: ' + data.error);
+            return;
+        }
+        
+        if (data.quiz && Array.isArray(data.quiz)) {
+            console.log('🎯 Quiz gösteriliyor, soru sayısı:', data.quiz.length);
+            displayQuiz(data.quiz, data.mode || 'unknown');
+            document.getElementById('quiz-section').style.display = 'block';
+            document.getElementById('quiz-section').scrollIntoView({behavior: 'smooth'});
+        } else {
+            console.error('❌ Geçersiz quiz formatı:', data);
+            alert('Quiz formatı geçersiz');
+        }
+    })
+    .catch(error => {
+        console.error('🔴 Quiz oluşturma hatası:', error);
+        button.disabled = false;
+        button.innerHTML = '📝 Quiz Oluştur';
+        
+        let errorMessage = 'Bilinmeyen hata oluştu';
+        if (error.message.includes('Failed to fetch')) {
+            errorMessage = 'Sunucuya bağlanılamadı. Lütfen tekrar deneyin.';
+        } else if (error.message.includes('HTTP 500')) {
+            errorMessage = 'Sunucu hatası oluştu. Lütfen daha sonra tekrar deneyin.';
+        } else if (error.message.includes('HTTP 403')) {
+            errorMessage = 'Bu işlem için yetkiniz bulunmuyor.';
+        } else {
+            errorMessage = error.message;
+        }
+        
+        alert('Quiz oluşturulurken hata: ' + errorMessage);
+    });
+}
+
+function displayQuiz(quizData, mode = 'unknown') {
+    const container = document.getElementById('quiz-container');
+    
+    let html = '<div class="quiz-header">';
+    html += '<h4>🎮 Oluşturulan Quiz</h4>';
+    
+    // Mode badge ekle
+    if (mode === 'demo') {
+        html += '<span class="mode-badge demo">📝 Demo Modu</span>';
+    } else if (mode === 'ai') {
+        html += '<span class="mode-badge ai">🤖 AI Destekli</span>';
+    }
+    
+    html += '</div>';
+    
+    if (!quizData || quizData.length === 0) {
+        html += '<div class="error">❌ Quiz soruları bulunamadı</div>';
+        container.innerHTML = html;
+        return;
+    }
+    
+    html += '<div class="quiz-questions">';
+    
+    quizData.forEach((question, index) => {
+        html += `
+            <div class="quiz-question">
+                <h5>Soru ${index + 1}: ${question.question}</h5>
+                <div class="quiz-options">
+                    ${question.options ? question.options.map((option, i) => `
+                        <label class="quiz-option">
+                            <input type="radio" name="question${index}" value="${option}">
+                            <span><strong>${String.fromCharCode(65 + i)})</strong> ${option}</span>
+                        </label>
+                    `).join('') : '<p>Seçenekler bulunamadı</p>'}
+                </div>
+                <div class="quiz-answer" style="display: none;">
+                    <strong>✅ Doğru Cevap:</strong> ${question.correct_answer || 'Belirtilmemiş'}
+                    ${question.explanation ? `<br><em>💡 ${question.explanation}</em>` : ''}
+                </div>
+            </div>
+        `;
+    });
+    
+    html += `
+        </div>
+        <div class="quiz-actions">
+            <button onclick="showAnswers()" class="btn btn-primary">🔍 Cevapları Göster</button>
+            <button onclick="checkAnswers()" class="btn btn-success">✅ Kontrolünü Yap</button>
+            <button onclick="window.print()" class="btn btn-outline">🖨️ Yazdır</button>
+        </div>
+        <div class="quiz-footer">
+            <p><strong>🎯 Toplam ${quizData.length} soru oluşturuldu!</strong></p>
+        </div>
+    `;
+    
+    container.innerHTML = html;
+}
+
+function showAnswers() {
+    document.querySelectorAll('.quiz-answer').forEach(answer => {
+        answer.style.display = 'block';
+    });
+}
+
+function checkAnswers() {
+    // Quiz kontrol mantığı
+    const questions = document.querySelectorAll('.quiz-question');
+    let correct = 0;
+    let total = questions.length;
+    
+    questions.forEach((question, index) => {
+        const selectedOption = question.querySelector('input[type="radio"]:checked');
+        const correctAnswer = question.querySelector('.quiz-answer strong').textContent.replace('✅ Doğru Cevap: ', '');
+        
+        if (selectedOption && selectedOption.value === correctAnswer) {
+            correct++;
+            question.style.backgroundColor = '#d4edda';
+            question.style.borderLeft = '4px solid #28a745';
+        } else {
+            question.style.backgroundColor = '#f8d7da';
+            question.style.borderLeft = '4px solid #dc3545';
+        }
+    });
+    
+    const percentage = Math.round((correct / total) * 100);
+    let message = `🎯 Sonuç: ${correct}/${total} doğru (${percentage}%)\n\n`;
+    
+    if (percentage >= 80) {
+        message += '🏆 Mükemmel! Konuyu çok iyi kavramışsınız!';
+    } else if (percentage >= 60) {
+        message += '👍 İyi! Biraz daha çalışmayla mükemmel olacaksınız!';
+    } else {
+        message += '📚 Konuyu tekrar gözden geçirmenizi öneririz.';
+    }
+    
+    alert(message);
+}
+</script>
+
+<style>
+.quiz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.quiz-header h4 {
+    margin: 0;
+    color: #2c5aa0;
+}
+
+.mode-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+.mode-badge.demo {
+    background: #ffc107;
+    color: #212529;
+}
+
+.mode-badge.ai {
+    background: #28a745;
+    color: white;
+}
+
+.quiz-questions {
+    margin-bottom: 20px;
+}
+
+.quiz-question {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border-left: 4px solid #007bff;
+    transition: all 0.3s ease;
+}
+
+.quiz-question h5 {
+    color: #2c5aa0;
+    margin: 0 0 15px 0;
+}
+
+.quiz-options {
+    margin: 15px 0;
+}
+
+.quiz-option {
+    display: block;
+    padding: 8px 0;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.quiz-option:hover {
+    background-color: #e9ecef;
+    border-radius: 4px;
+    padding-left: 8px;
+}
+
+.quiz-option input {
+    margin-right: 10px;
+}
+
+.quiz-answer {
+    background: #d1ecf1;
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 10px;
+    border-left: 3px solid #bee5eb;
+}
+
+.quiz-actions {
+    text-align: center;
+    margin: 20px 0;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.quiz-footer {
+    text-align: center;
+    padding: 15px;
+    background: white;
+    border-radius: 6px;
+    border-top: 3px solid #007bff;
+    color: #2c5aa0;
+}
+
+.error {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 15px;
+    border-radius: 6px;
+    border-left: 4px solid #dc3545;
+    margin: 15px 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .quiz-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .quiz-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+</style>
+{% endblock %} 
