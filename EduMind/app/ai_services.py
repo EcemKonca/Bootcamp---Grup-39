@@ -323,33 +323,26 @@ def generate_enhanced_quiz_from_text(text: str, difficulty: str = "medium") -> d
             question_count = 5
             complexity = "zorlu ve analitik"
         else:
-            question_count = 5  # Medium için de 5 soru
+            question_count = 5
             complexity = "orta seviye"
         
         prompt = f"""
+        Sen bir öğretmensin ve öğrencinin metni anlayıp anlamadığını ölçmek için test hazırlıyorsun.
         Aşağıdaki metni dikkatli bir şekilde analiz et ve {question_count} adet {complexity} çoktan seçmeli test sorusu oluştur.
 
-        SORU KRİTERLERİ:
-        ✅ Her soru metnin farklı önemli bölümlerinden olmalı
-        ✅ Sorular metinde GERÇEKTEN yer alan bilgilerden oluşmalı
-        ✅ Çeldirici şıklar mantıklı ve gerçekçi olmalı
-        ✅ Doğru cevap açıklaması metnin hangi kısmından geldiğini belirtmeli
-        ✅ Farklı soru tipleri kullan: tanım, sebep-sonuç, karşılaştırma, analiz
+        KRİTİK TALİMATLAR:
+        - HER SEFERİNDE FARKLI VE ÖZGÜN SORULAR ÜRET. Soruları çeşitlendir, aynı konsepti tekrar sorma.
+        - Sorular SADECE verilen metnin içeriğiyle alakalı olmalıdır. Metinde olmayan bilgileri sorma.
+        - Çeldirici şıklar mantıklı ve konuyla ilgili olmalı.
+        - Doğru cevap açıklaması, cevabın metnin hangi kısmından geldiğini belirten kısa bir alıntı içermelidir.
 
-        SORU TİPLERİ ÖRNEKLERİ:
-        - "Metinde bahsedilen... nedir?"
-        - "...hangi nedenle oluşur?"
-        - "Aşağıdakilerden hangisi... özelliklerinden biridir?"
-        - "Metne göre... ve ... arasındaki fark nedir?"
-        - "Yazara göre en önemli nokta hangisidir?"
-
-        SADECE JSON formatında yanıtla, başka metin ekleme:
+        İSTENEN JSON FORMATI (Başka hiçbir metin ekleme):
         [
             {{
                 "question": "Metne dayalı soru metni?",
                 "options": ["Gerçekçi şık 1", "Gerçekçi şık 2", "Gerçekçi şık 3", "Gerçekçi şık 4"],
                 "correct_answer": "Doğru olan şık",
-                "explanation": "Bu cevap doğrudur çünkü metinde 'alıntı kısmı' şeklinde bahsedilmektedir."
+                "explanation": "Bu cevap doğrudur çünkü metinde '...ilgili cümle...' şeklinde bahsedilmektedir."
             }}
         ]
 
@@ -360,20 +353,21 @@ def generate_enhanced_quiz_from_text(text: str, difficulty: str = "medium") -> d
         """
         
         response = model.generate_content(prompt)
-        quiz_data = json.loads(extract_json_from_response(response.text))
+        
+        # --- DÜZELTME BURADA ---
+        # Gereksiz json.loads() kaldırıldı. Fonksiyon zaten işlenmiş veri veriyor.
+        quiz_data = extract_json_from_response(response.text) 
+        
         return {"quiz": quiz_data, "mode": "ai", "difficulty": difficulty}
         
     except Exception as e:
         print(f"🔴 AI quiz oluşturma hatası: {e}")
-        # Quota hatası varsa global değişkenleri güncelle
         if "quota" in str(e).lower() or "429" in str(e):
             api_available = False
             model = None
             print("🚫 Quota bitti - Demo moda geçildi")
         
-        # Demo quiz döndür (artık api_available False olduğu için recursive olmayacak)
         return generate_smart_demo_quiz(text, difficulty)
-
 # Eski fonksiyonları koruyalım (geriye uyumluluk için)
 def summarize_and_get_keywords(text: str) -> dict:
     """Eski API - geriye uyumluluk için."""
