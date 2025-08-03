@@ -262,6 +262,92 @@ Toplam 300 puanlık backlog'un ikinci sprintinde, ürünün teknik altyapısın�
 
 ---
 
+## 🌀 Sprint 3
+
+---
+
+### 📝 Sprint Notları  
+Bu sprintte EduMind platformunun kullanıcı deneyimi geliştirildi, AI özellikleri güçlendirildi ve sistem üretim öncesi güvenlik–performans optimizasyonlarından geçirildi.  
+Not yönetimine klasörleme, gelişmiş arama ve istatistik grafikleri eklendi.  
+AI tarafında metin analizi ve quiz oluşturma özellikleri devreye alındı.  
+
+---
+
+### 🎯 Sprint İçinde Tamamlanması Tahmin Edilen Puan  
+**100 Puan**
+
+---
+
+### 📐 Puan Tamamlama Mantığı  
+Toplam 300 puanlık backlog’un üçüncü ve son sprintinde, kullanıcı deneyimi ve AI yeteneklerini geliştiren 100 puanlık işler tamamlandı.  
+Bu sprint, projenin üretim öncesi son hazırlıklarını kapsadı.  
+
+---
+
+### ☕ Daily Scrum  
+- Daily Scrum toplantıları Discord üzerinden gerçekleştirildi.  
+- Günlük ilerleme raporları ve hata bildirimleri WhatsApp grubundan paylaşıldı.  
+
+---
+
+### 📌 Sprint Board Güncellemesi  
+- Görev takibi Trello üzerinden sürdürüldü.  
+🖼️ <img width="1425" height="7![img.png](img.png)47" alt="image" src="https://github.com/user-attachments/assets/xxxxx" />  
+
+---
+
+### 🖥️ Ürün Durumu (Sprint 3)
+
+#### ✅ Yeni Özellikler
+- **Gelişmiş AI Analizi**  
+  - Metin anahtar kelime tespiti  
+  - Not analizi
+  - Not içeriğine göre quiz oluşturma
+- **Not Yönetimi İyileştirmeleri**  
+  - Notu basit veya detaylı açıklama seçeneği
+  - Detaylı not istatistiği
+
+
+#### ✅ İyileştirmeler
+- SQLAlchemy ile veritabanı sorgu optimizasyonu  
+- AI çağrılarında cache mekanizması ile hız optimizasyonu  
+
+#### ✅ Güvenlik ve Test
+- XSS ve CSRF korumaları  
+- Kullanıcı dostu API hata mesajları  
+- Birim testler ile API ve veritabanı işlemleri doğrulandı  
+
+---
+
+### 🗣️ Sprint Review  
+- Kullanıcı deneyimi açısından platform daha zengin hale getirildi  
+- AI analizleri kişiselleştirilmiş ve içerik odaklı şekilde geliştirildi  
+- Not analizi ve metin içeriğine göre quiz oluşturma eklendi 
+- Öğrenme sürecini görselleştiren dinamik grafikler başarıyla entegre edildi  
+- Güvenlik ve performans optimizasyonları tamamlanarak üretime hazır hale getirildi  
+
+**Katılımcılar:**  
+- Ecem  
+- Furkan  
+- İsra  
+
+---
+
+### 🔍 Sprint Retrospective  
+
+#### ✅ Güçlü Yönler:
+- Kullanıcı odaklı geliştirmeler başarıyla tamamlandı  
+- AI özellikleri içerik zenginliği açısından ileri seviyeye taşındı  
+- Takım içi iletişim sprint boyunca hızlı ve netti  
+- Test ve güvenlik adımları eksiksiz tamamlandı  
+
+#### ⚠️ İyileştirme Alanları:
+- Bir sonraki projede test otomasyon kapsamı genişletilebilir  
+- Mobil cihazlarda performans ölçümleri daha erken yapılabilir  
+- Kullanıcı geri bildirimleri daha sık toplanarak geliştirme sürecine entegre edilebilir  
+
+
+
 ## 🤝 Katkıda Bulunma
 
 1. Fork yapın
@@ -279,5 +365,4 @@ Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için LICENSE dosyas
 - Google Gemini AI ekibine
 - Flask toplulukuna
 - Tüm açık kaynak katkıda bulunanlar
-
 
