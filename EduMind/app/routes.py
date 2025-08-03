@@ -240,3 +240,18 @@ def stats():
         ai_analyzed_notes=ai_analyzed_notes,
         ai_usage_rate=ai_usage_rate
     )
+
+@main_bp.route("/explain-text", methods=['POST'])
+@login_required
+def explain_text_route():
+    data = request.get_json()
+    if not data or 'text' not in data or 'complexity' not in data:
+        return jsonify({"error": "Eksik bilgi gönderildi."}), 400
+
+    selected_text = data.get('text')
+    complexity_level = data.get('complexity')
+
+    from app.ai_services import explain_text
+    result = explain_text(selected_text, complexity_level)
+    
+    return jsonify(result)

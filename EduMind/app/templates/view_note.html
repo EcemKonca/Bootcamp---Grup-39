@@ -208,4 +208,17 @@ function createQuiz(noteId) {
     transform: none;
 }
 </style>
+<div id="text-selection-menu" class="selection-menu" style="display: none;">
+    <button data-complexity="basit" class="menu-btn">Basit Anlat</button>
+    <button data-complexity="detayli" class="menu-btn">Detaylı Anlat</button>
+</div>
+
+<div id="explanation-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="modal-close-btn">&times;</span>
+        <h3>🧠 Akıllı Açıklayıcı</h3>
+        <div id="explanation-result">
+            </div>
+    </div>
+</div>
 {% endblock %}

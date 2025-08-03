@@ -22,7 +22,7 @@ class Config:
     GEMINI_API_KEY = (
         os.environ.get('GEMINI_API_KEY') or 
         locals().get('GEMINI_API_KEY') or 
-        'AIzaSyCn6bl1kYBdW5J8k9VofW-M1SfDYqdnsAQ'  # GitHub'a yüklenecek ama .gitignore ile korunacak
+        'AIzaSyATF-5mWoAWK7oFOhMhuFP3R8W4WpvJWPY'  # GitHub'a yüklenecek ama .gitignore ile korunacak
     )
     
     # AI Ayarları

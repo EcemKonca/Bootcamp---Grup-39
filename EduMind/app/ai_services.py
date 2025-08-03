@@ -386,3 +386,57 @@ def generate_quiz_from_text(text: str) -> dict:
         return result
     else:
         return {"error": result.get("error", "Quiz oluşturulamadı.")}
+    
+# Bu fonksiyonu dosyanın sonlarına doğru, diğer ana fonksiyonların yanına ekle
+
+def explain_text(text: str, complexity: str) -> dict:
+    """
+    Verilen metni, belirtilen karmaşıklık seviyesine göre açıklar.
+    complexity: 'basit' (çocuklar için) veya 'detayli' (gençler için) olabilir.
+    """
+    global api_available, model
+
+    # Metin çok kısaysa analiz etme
+    if not text or len(text.strip()) < 5:
+        return {"explanation": "Açıklanacak kadar uzun bir metin seçilmedi."}
+
+    # API yoksa veya hata oluştuysa demo cevap üret
+    if not api_available or not model or not Config.GEMINI_API_KEY:
+        if complexity == 'basit':
+            demo_explanation = f"Bu '{text}' konusu, çocukların anlayacağı dilde basitçe açıklanır. Örneğin, bir ağacın yaprakları gibidir."
+        else:
+            demo_explanation = f"'{text}' konusu, detaylı bir kavramdır. Genellikle şu alt başlıkları içerir: A, B ve C. Bu konuyu anlamak, genel kültür için önemlidir."
+        return {"explanation": demo_explanation, "mode": "demo"}
+
+    # Gerçek AI analizi
+    try:
+        if complexity == 'basit':
+            prompt_template = """
+            Aşağıdaki konsepti veya metni, sanki 7-12 yaş arası bir çocuğa anlatıyormuş gibi, 
+            çok basit bir dille, kısa cümlelerle ve kolay anlaşılır bir örnekle açıkla. 
+            Karmaşık terimler kullanmaktan kaçın. En fazla 3-4 cümle olsun.
+
+            Açıklanacak Metin: "{text}"
+            """
+        else:  # detayli
+            prompt_template = """
+            Aşağıdaki konsepti veya metni, sanki 13 yaşından büyük bir gence anlatıyormuş gibi,
+            daha detaylı, mantıksal bağlantıları kurarak ve konunun önemini vurgulayarak açıkla.
+            Gerekirse teknik terimleri de kısaca açıklayarak kullanabilirsin.
+
+            Açıklanacak Metin: "{text}"
+            """
+        
+        prompt = prompt_template.format(text=text)
+        
+        response = model.generate_content(prompt)
+        
+        if not response or not response.text:
+            raise Exception("API'dan boş cevap geldi")
+
+        return {"explanation": response.text.strip(), "mode": "ai"}
+
+    except Exception as e:
+        print(f"🔴 AI açıklama hatası: {e}")
+        # Hata durumunda demo moduna geç
+        return {"explanation": f"'{text}' konusu hakkında bir açıklama üretilirken bir sorun oluştu.", "mode": "error"}

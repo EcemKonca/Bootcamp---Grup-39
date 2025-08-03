@@ -128,3 +128,81 @@ function displayQuiz(quiz, mode = 'unknown') {
     // Quiz container'a scroll yap
     quizContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
+
+// Akıllı Açıklayıcı (ELI5/15) özelliği
+document.addEventListener('DOMContentLoaded', function() {
+    const noteContentContainer = document.querySelector('.content-text'); // Hedefimiz notun içeriği
+    const selectionMenu = document.getElementById('text-selection-menu');
+    const modal = document.getElementById('explanation-modal');
+    const closeModalBtn = document.querySelector('.modal-close-btn');
+    const explanationResultDiv = document.getElementById('explanation-result');
+    let selectedText = '';
+
+    if (noteContentContainer) {
+        // Metin seçimi bittiğinde menüyü göster
+        noteContentContainer.addEventListener('mouseup', function(e) {
+            selectedText = window.getSelection().toString().trim();
+            if (selectedText.length > 3 && selectedText.length < 300) { // Çok kısa veya çok uzun metinleri engelle
+                selectionMenu.style.left = `${e.pageX - 50}px`;
+                selectionMenu.style.top = `${e.pageY + 15}px`;
+                selectionMenu.style.display = 'flex';
+            } else {
+                selectionMenu.style.display = 'none';
+            }
+        });
+    }
+
+    // Sayfaya tıklayınca menüyü gizle (menünün kendisi hariç)
+    document.addEventListener('mousedown', function(e) {
+        if (selectionMenu && !selectionMenu.contains(e.target)) {
+            selectionMenu.style.display = 'none';
+        }
+    });
+
+    // Menüdeki butonlara tıklandığında
+    if (selectionMenu) {
+        selectionMenu.addEventListener('click', function(e) {
+            if (e.target.classList.contains('menu-btn')) {
+                const complexity = e.target.dataset.complexity;
+                getExplanation(complexity);
+            }
+        });
+    }
+
+    // Açıklama isteme fonksiyonu
+    function getExplanation(complexity) {
+        if (selectedText) {
+            selectionMenu.style.display = 'none';
+            explanationResultDiv.innerHTML = '<p>🤖 AI düşünüyor...</p>';
+            modal.style.display = 'flex';
+
+            fetch('/explain-text', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: selectedText, complexity: complexity })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    explanationResultDiv.innerHTML = `<p style="color: red;">Hata: ${data.error}</p>`;
+                } else {
+                    explanationResultDiv.innerHTML = data.explanation;
+                }
+            })
+            .catch(error => {
+                console.error('Fetch Error:', error);
+                explanationResultDiv.innerHTML = '<p style="color: red;">Bir ağ hatası oluştu.</p>';
+            });
+        }
+    }
+
+    // Modal pencereyi kapatma
+    if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', () => modal.style.display = 'none');
+    }
+    window.addEventListener('click', (e) => {
+        if (e.target == modal) {
+            modal.style.display = 'none';
+        }
+    });
+});
