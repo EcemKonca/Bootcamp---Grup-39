@@ -292,7 +292,8 @@ Bu sprint, projenin üretim öncesi son hazırlıklarını kapsadı.
 
 ### 📌 Sprint Board Güncellemesi  
 - Görev takibi Trello üzerinden sürdürüldü.  
-🖼️ <img width="1425" height="7![img.png](img.png)47" alt="image" src="https://github.com/user-attachments/assets/xxxxx" />  
+<img width="1430" height="691" alt="image" src="https://github.com/user-attachments/assets/3c07e836-a93a-4125-b012-b7f3a5ab1ab2" />
+
 
 ---
 
